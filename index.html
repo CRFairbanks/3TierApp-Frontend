@@ -1,136 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Information Form</title>
-    <!-- Tailwind CSS for a modern, responsive design -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-      }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us</title>
+<style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
+        .form-container { width: 300px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+</style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-
-    <!-- Main Container -->
-    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Contact Form</h1>
-        <p class="text-gray-600 mb-6 text-center">Please fill out this form to submit your information.</p>
-
-        <!-- Status Message Box -->
-        <div id="status-message" class="hidden p-3 mb-4 rounded-lg text-center" role="alert"></div>
-
-        <!-- Form -->
-        <form id="infoForm" class="space-y-6">
-
-            <!-- Full Name -->
-            <div>
-                <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
-                <input type="text" id="fullName" name="fullName" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-
-            <!-- Email Address -->
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                <input type="email" id="email" name="email" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-
-            <!-- Phone Number -->
-            <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-
-            <!-- Custom Comment -->
-            <div>
-                <label for="comment" class="block text-sm font-medium text-gray-700">Custom Comment</label>
-                <textarea id="comment" name="comment" rows="4"
-                          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-            </div>
-
-            <!-- Submit Button -->
-            <div>
-                <button type="submit"
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
-                    Submit Information
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <script>
-        // Get references to the form and status message box
-        const infoForm = document.getElementById('infoForm');
-        const statusMessage = document.getElementById('status-message');
-
-        // Function to display messages to the user
-        function showStatus(message, type) {
-            statusMessage.textContent = message;
-            statusMessage.className = `p-3 mb-4 rounded-lg text-center ${type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
-            statusMessage.classList.remove('hidden');
-        }
-
-        // Add a submit event listener to the form
-        infoForm.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            // Clear previous messages
-            statusMessage.classList.add('hidden');
-
-            // Simple client-side validation
-            const emailInput = document.getElementById('email').value;
-            const phoneInput = document.getElementById('phone').value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const phoneRegex = /^\+?[1-9]\d{1,14}$/; // E.164 format
-
-            if (!emailRegex.test(emailInput)) {
-                showStatus('Please enter a valid email address.', 'error');
-                return;
-            }
-            if (!phoneRegex.test(phoneInput)) {
-                showStatus('Please enter a valid phone number (e.g., +1234567890).', 'error');
-                return;
-            }
-
-            const formData = {
-                fullName: document.getElementById('fullName').value,
-                email: emailInput,
-                phone: phoneInput,
-                comment: document.getElementById('comment').value
-            };
-
-            // Replace with your Azure Web App URL
-            const backendUrl = 'YOUR_AZURE_WEB_APP_URL/submit';
-
+<body>
+<div class="form-container">
+<h3>Contact Us</h3>
+<form id="contactForm">
+<input type="text" id="name" placeholder="Name" required>
+<input type="email" id="email" placeholder="Email" required>
+<input type="tel" id="phone" placeholder="Phone Number" required>
+<button type="submit">Submit</button>
+</form>
+<p id="responseMessage"></p>
+</div>
+<script>
+        document.getElementById('contactForm').addEventListener('submit', async function(event) {
+            // This stops the browser from its default behavior of reloading the page on form submission.
+            // We want to handle it ourselves with JavaScript.
+            event.preventDefault();
+ 
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const responseMessage = document.getElementById('responseMessage');
+ 
+            // This is the URL of your Backend App Service (the "kitchen")
+            // IMPORTANT: Replace this with the actual URL of your logic layer App Service
+            const apiUrl = 'https://contact-form-api-logiclayer-fsgdbnbueqgsedf0.centralus-01.azurewebsites.net/api/contacts';
+ 
             try {
-                const response = await fetch(backendUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
+                // 'fetch' sends the data to our backend API. We use 'await' because this network
+                // request takes time, and we need to wait for the response.
+                const response = await fetch(apiUrl, {
+                    method: 'POST', // We are sending (POSTing) data.
+                    headers: { 'Content-Type': 'application/json' }, // We're telling the server the data is in JSON format.
+                    body: JSON.stringify({ name, email, phone }) // We convert our JavaScript object to a JSON string.
                 });
-
+ 
                 if (response.ok) {
-                    showStatus('Information submitted successfully!', 'success');
-                    infoForm.reset(); // Clear the form
+                    responseMessage.textContent = 'Thank you for your submission!';
+                    document.getElementById('contactForm').reset();
                 } else {
-                    const errorData = await response.json();
-                    showStatus(`Submission failed: ${errorData.error || 'Server error'}`, 'error');
+                    responseMessage.textContent = 'An error occurred. Please try again.';
                 }
             } catch (error) {
-                console.error('Submission error:', error);
-                showStatus('An error occurred. Please try again later.', 'error');
+                console.error('Error:', error);
+                responseMessage.textContent = 'An error occurred. Please try again.';
             }
         });
-    </script>
-
+</script>
 </body>
 </html>
